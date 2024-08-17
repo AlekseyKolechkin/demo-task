@@ -8,12 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.example.demoservice.api.v1.model.*
 import org.example.demoservice.customer.CustomerService
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/v1/customers")
@@ -47,8 +42,12 @@ class CustomerRestController(
         ]
     )
     @GetMapping("/{tenantId}")
-    fun getCustomers(@PathVariable tenantId: String): ApiCustomerList {
-        return customerService.getCustomers(tenantId).toApi()
+    fun getCustomers(
+        @PathVariable tenantId: String,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "10") size: Int
+    ): ApiCustomerList {
+        return customerService.getCustomers(tenantId, page, size).toApi()
     }
 
     @Operation(summary = "get a specific customer of a tenant")
