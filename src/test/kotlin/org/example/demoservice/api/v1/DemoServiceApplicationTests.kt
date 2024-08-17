@@ -63,9 +63,17 @@ class DemoServiceApplicationTests {
         //when
         val customer1 = customerRestController.registerCustomer(tenantId, RegistrationRequest(email1))
         val customer2 = customerRestController.registerCustomer(tenantId, RegistrationRequest(email2))
-        val customers = customerRestController.getCustomers(tenantId).customers
+        val customerList = customerRestController.getCustomers(tenantId, 0, 10)
 
         //then
+        Assertions.assertNotNull(customerList)
+        Assertions.assertEquals(0, customerList.page)
+        Assertions.assertEquals(10, customerList.size)
+        Assertions.assertEquals(2, customerList.totalElements)
+        Assertions.assertEquals(1, customerList.totalPages)
+
+        val customers = customerList.customers
+        Assertions.assertEquals(2, customers.size)
         Assertions.assertTrue(customers.contains(customer1))
         Assertions.assertTrue(customers.contains(customer2))
 

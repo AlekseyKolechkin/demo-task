@@ -1,10 +1,15 @@
 package org.example.demoservice.api.v2.model
 
-import org.example.demoservice.customer.dto.CustomerDTO
 import org.example.demoservice.customer.dto.CreateCustomerDTO
+import org.example.demoservice.customer.dto.CustomerDTO
+import org.springframework.data.domain.Page
 
 data class ApiCustomerList(
     val customers: List<ApiCustomer>,
+    val page: Int,
+    val size: Int,
+    val totalElements: Long,
+    val totalPages: Int
 )
 
 data class ApiCustomer(
@@ -38,8 +43,12 @@ fun CustomerDTO.toApi() = ApiCustomer(
     phoneNumber = phoneNumber?: "",
 )
 
-fun List<CustomerDTO>.toApi() = ApiCustomerList(
-    customers = map {
+fun Page<CustomerDTO>.toApi() = ApiCustomerList(
+    customers = content.map {
         it.toApi()
-    }
+    },
+    page = number,
+    size = size,
+    totalElements = totalElements,
+    totalPages = totalPages
 )

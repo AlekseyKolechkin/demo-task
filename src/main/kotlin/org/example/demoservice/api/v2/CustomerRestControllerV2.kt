@@ -42,8 +42,12 @@ class CustomerRestControllerV2(
         ]
     )
     @GetMapping("/{tenantId}")
-    fun getCustomers(@PathVariable tenantId: String): ApiCustomerList {
-        return customerService.getCustomers(tenantId).toApi()
+    fun getCustomers(
+        @PathVariable tenantId: String,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "10") size: Int
+    ): ApiCustomerList {
+        return customerService.getCustomers(tenantId, page, size).toApi()
     }
 
     @Operation(summary = "get a specific customer of a tenant")
