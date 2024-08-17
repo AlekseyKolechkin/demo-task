@@ -12,4 +12,7 @@ data class Customer(
     val tenantId: String,
     val customerNumber: String,
     val email: String,
+    val name: String? = null,
+    val address: String? = null,
+    val phoneNumber: String? = null
 )
