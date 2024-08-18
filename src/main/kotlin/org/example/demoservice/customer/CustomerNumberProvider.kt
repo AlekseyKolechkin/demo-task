@@ -8,10 +8,13 @@ class CustomerNumberProvider {
 
     companion object {
         private const val NUMBER_LENGTH = 5
-        private val MAX_CUSTOMER_NUMBER = "9".repeat(NUMBER_LENGTH).toLong()
+        private const val CHAR_POOL = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
     }
 
     fun nextCustomerNumber(): String {
-        return Random.nextLong(1, MAX_CUSTOMER_NUMBER).toString().padStart(NUMBER_LENGTH, '0')
+        return (1..NUMBER_LENGTH)
+            .map { Random.nextInt(0, CHAR_POOL.length) }
+            .map(CHAR_POOL::get)
+            .joinToString("")
     }
 }

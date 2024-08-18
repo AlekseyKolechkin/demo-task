@@ -7,3 +7,7 @@ spring:
     database: demo
     username: demo_application
     password: demo_password
+
+customer:
+  number:
+    max.retries: 3
