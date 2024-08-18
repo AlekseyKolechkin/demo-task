@@ -27,6 +27,13 @@ data class RegistrationRequest(
     val phoneNumber: String?
 )
 
+data class ApiErrorResponse(
+    val status: Int,
+    val error: String,
+    val message: String?,
+    val path: String
+)
+
 fun RegistrationRequest.toCreateCustomerDTO(tenantId: String) = CreateCustomerDTO(
     tenantId = tenantId,
     email = email,

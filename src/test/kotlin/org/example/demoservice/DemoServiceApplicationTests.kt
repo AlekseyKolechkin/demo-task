@@ -3,6 +3,7 @@ package org.example.demoservice
 import org.bson.Document
 import org.example.demoservice.api.v1.CustomerRestController
 import org.example.demoservice.api.v1.model.RegistrationRequest
+import org.example.demoservice.customer.CustomerNotFoundException
 import org.example.demoservice.testconfig.MongoDBTestContainerConfig
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -100,5 +101,21 @@ class DemoServiceApplicationTests {
         Assertions.assertEquals(name2, foundCustomer2.name)
         Assertions.assertEquals(address2, foundCustomer2.address)
         Assertions.assertEquals(phoneNumber2, foundCustomer2.phoneNumber)
+    }
+
+    @Test
+    fun getNonExistentCustomer() {
+        //given
+        val tenantId = "test-tenant"
+        val nonExistentCustomerNumber = "999"
+
+        //when
+        val exception = Assertions.assertThrows(CustomerNotFoundException::class.java) {
+            customerRestController.getCustomer(tenantId, nonExistentCustomerNumber)
+        }
+
+        //then
+        Assertions.assertEquals("Customer with tenantId=$tenantId and customerNumber=$nonExistentCustomerNumber not found",
+            exception.message)
     }
 }
