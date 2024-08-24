@@ -3,13 +3,15 @@ package org.example.demoservice
 import org.bson.Document
 import org.example.demoservice.api.v1.CustomerRestController
 import org.example.demoservice.api.v1.model.RegistrationRequest
-import org.example.demoservice.customer.CustomerNotFoundException
+import org.example.demoservice.customer.event.CustomerEventProducer
+import org.example.demoservice.customer.exception.CustomerNotFoundException
 import org.example.demoservice.testconfig.MongoDBTestContainerConfig
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.data.mongodb.core.MongoOperations
 import org.springframework.test.context.ContextConfiguration
 import org.testcontainers.junit.jupiter.Testcontainers
@@ -23,6 +25,9 @@ import org.testcontainers.junit.jupiter.Testcontainers
     webEnvironment = SpringBootTest.WebEnvironment.MOCK
 )
 class DemoServiceApplicationTests {
+
+    @MockBean
+    private lateinit var customerEventProducer: CustomerEventProducer
 
     @Autowired
     private lateinit var mongoOperations: MongoOperations

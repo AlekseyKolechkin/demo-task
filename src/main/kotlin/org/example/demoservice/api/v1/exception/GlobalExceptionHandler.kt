@@ -1,7 +1,7 @@
 package org.example.demoservice.api.v1.exception
 
 import org.example.demoservice.api.v1.model.ApiErrorResponse
-import org.example.demoservice.customer.CustomerNotFoundException
+import org.example.demoservice.customer.exception.CustomerNotFoundException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -34,5 +34,4 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
         return ResponseEntity(errorResponse, HttpStatus.NOT_FOUND)
     }
 
-    // Add more exception handlers as needed
 }

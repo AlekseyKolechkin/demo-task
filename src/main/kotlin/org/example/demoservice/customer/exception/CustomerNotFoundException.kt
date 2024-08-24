@@ -1,4 +1,4 @@
-package org.example.demoservice.customer
+package org.example.demoservice.customer.exception
 
 @Suppress("serial")
 class CustomerNotFoundException(

@@ -2,6 +2,8 @@ package org.example.demoservice
 
 import org.example.demoservice.customer.*
 import org.example.demoservice.customer.dto.CreateCustomerDTO
+import org.example.demoservice.customer.event.CustomerEventProducer
+import org.example.demoservice.customer.exception.DuplicateCustomerNumberException
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
@@ -14,11 +16,12 @@ class CustomerServiceTest {
 
     private val customerRepository: CustomerRepository = mock(CustomerRepository::class.java)
     private val customerNumberProvider: CustomerNumberProvider = mock(CustomerNumberProvider::class.java)
+    private val customerEventProducer: CustomerEventProducer = mock(CustomerEventProducer::class.java)
+
+    private val customerService = CustomerService(customerRepository, customerNumberProvider, customerEventProducer)
 
     @Value("\${customer.number.max.retries}")
     private var maxRetries: Int = 3
-
-    private val customerService = CustomerService(customerRepository, customerNumberProvider)
 
     @Test
     fun throwsDuplicateCustomerNumberException() {
