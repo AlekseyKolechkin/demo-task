@@ -1,6 +1,6 @@
 package org.example.demoservice.api.common.exception
 
-import org.example.demoservice.customer.CustomerNotFoundException
+import org.example.demoservice.customer.exception.CustomerNotFoundException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice

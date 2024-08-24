@@ -2,6 +2,9 @@ package org.example.demoservice.customer
 
 import org.example.demoservice.customer.dto.CreateCustomerDTO
 import org.example.demoservice.customer.dto.CustomerDTO
+import org.example.demoservice.customer.event.CustomerEventProducer
+import org.example.demoservice.customer.exception.CustomerNotFoundException
+import org.example.demoservice.customer.exception.DuplicateCustomerNumberException
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.data.domain.Page
@@ -12,17 +15,20 @@ import org.springframework.stereotype.Service
 class CustomerService(
     private val customerRepository: CustomerRepository,
     private val customerNumberProvider: CustomerNumberProvider,
+    private val customerEventProducer: CustomerEventProducer,
 ) {
 
     @Value("\${customer.number.max.retries}")
     private var maxRetries: Int = 3
 
     fun registerCustomer(newCustomer: CreateCustomerDTO): CustomerDTO {
-        return withRetryOnDuplicateCustomerNumber {
+        val customerDTO = withRetryOnDuplicateCustomerNumber {
             val customerNumber = customerNumberProvider.nextCustomerNumber()
             val customer = newCustomer.toEntity(customerNumber)
             customerRepository.save(customer).toDto()
         }
+        customerEventProducer.sendCustomerCreatedEvent(customerDTO)
+        return customerDTO
     }
 
     fun getCustomers(tenantId: String, page: Int, size: Int): Page<CustomerDTO> {
