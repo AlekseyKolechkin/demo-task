@@ -1,4 +1,4 @@
-package org.example.demoservice
+package org.example.demoservice.unit
 
 import org.example.demoservice.customer.*
 import org.example.demoservice.customer.dto.CreateCustomerDTO
@@ -7,18 +7,25 @@ import org.example.demoservice.customer.exception.DuplicateCustomerNumberExcepti
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.dao.DuplicateKeyException
 
 @SpringBootTest
 class CustomerServiceTest {
+    @MockBean
+    private lateinit var customerRepository: CustomerRepository
 
-    private val customerRepository: CustomerRepository = mock(CustomerRepository::class.java)
-    private val customerNumberProvider: CustomerNumberProvider = mock(CustomerNumberProvider::class.java)
-    private val customerEventProducer: CustomerEventProducer = mock(CustomerEventProducer::class.java)
+    @MockBean
+    private lateinit var customerNumberProvider: CustomerNumberProvider
 
-    private val customerService = CustomerService(customerRepository, customerNumberProvider, customerEventProducer)
+    @MockBean
+    private lateinit var customerEventProducer: CustomerEventProducer
+
+    @Autowired
+    private lateinit var customerService: CustomerService
 
     @Value("\${customer.number.max.retries}")
     private var maxRetries: Int = 3
