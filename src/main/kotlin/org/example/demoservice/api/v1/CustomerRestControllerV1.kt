@@ -8,17 +8,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.example.demoservice.api.v1.model.*
 import org.example.demoservice.customer.CustomerService
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/v1/customers")
 @Tag(name = "Customer API")
-class CustomerRestController(
+class CustomerRestControllerV1(
     private val customerService: CustomerService,
 ) {
 
@@ -33,8 +28,7 @@ class CustomerRestController(
     )
     @PostMapping("/{tenantId}")
     fun registerCustomer(@PathVariable tenantId: String, @RequestBody registrationRequest: RegistrationRequest): ApiCustomer {
-        val customer = registrationRequest.toCreateCustomerDTO(tenantId)
-        return customerService.registerCustomer(customer).toApi()
+        return customerService.registerCustomer(registrationRequest.toCreateCustomerDTO(tenantId)).toApi()
     }
 
     @Operation(summary = "get all registered customers of a tenant")

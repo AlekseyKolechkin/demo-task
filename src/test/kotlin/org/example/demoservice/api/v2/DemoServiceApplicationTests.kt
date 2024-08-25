@@ -1,8 +1,8 @@
-package org.example.demoservice
+package org.example.demoservice.api.v2
 
 import org.bson.Document
-import org.example.demoservice.api.v1.CustomerRestController
-import org.example.demoservice.api.v1.model.RegistrationRequest
+import org.example.demoservice.DemoServiceApplication
+import org.example.demoservice.api.v2.model.RegistrationRequest
 import org.example.demoservice.testconfig.MongoDBTestContainerConfig
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -27,7 +27,7 @@ class DemoServiceApplicationTests {
     private lateinit var mongoOperations: MongoOperations
 
     @Autowired
-    private lateinit var customerRestController: CustomerRestController
+    private lateinit var customerRestController: CustomerRestControllerV2
 
     @BeforeEach
     fun setUp() {
