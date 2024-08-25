@@ -6,6 +6,8 @@ import org.example.demoservice.customer.event.CustomerEventProducer
 import org.example.demoservice.customer.exception.CustomerNotFoundException
 import org.example.demoservice.customer.exception.DuplicateCustomerNumberException
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.cache.annotation.CachePut
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -21,6 +23,7 @@ class CustomerService(
     @Value("\${customer.number.max.retries}")
     private var maxRetries: Int = 3
 
+    @CachePut(value = ["customerCache"], key = "#result.tenantId + '_' + #result.customerNumber")
     fun registerCustomer(newCustomer: CreateCustomerDTO): CustomerDTO {
         val customerDTO = withRetryOnDuplicateCustomerNumber {
             val customerNumber = customerNumberProvider.nextCustomerNumber()
@@ -36,6 +39,7 @@ class CustomerService(
         return customerRepository.findAllByTenantId(tenantId, pageable).map { it.toDto() }
     }
 
+    @Cacheable(value = ["customerCache"], key = "#tenantId + '_' + #customerNumber")
     fun getCustomer(tenantId: String, customerNumber: String): CustomerDTO {
         return customerRepository.findByTenantIdAndCustomerNumber(tenantId, customerNumber)?.toDto()
             ?: throw CustomerNotFoundException(tenantId, customerNumber)
