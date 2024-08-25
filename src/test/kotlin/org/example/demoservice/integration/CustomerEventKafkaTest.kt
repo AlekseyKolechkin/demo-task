@@ -1,6 +1,5 @@
-package org.example.demoservice
+package org.example.demoservice.integration
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.apache.kafka.clients.consumer.ConsumerConfig
@@ -11,38 +10,22 @@ import org.example.demoservice.customer.dto.CreateCustomerDTO
 import org.example.demoservice.customer.event.CustomerEvent
 import org.example.demoservice.customer.event.CustomerEventType
 import org.example.demoservice.testconfig.KafkaTestContainerConfig
-import org.example.demoservice.testconfig.MongoDBTestContainerConfig
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit.jupiter.SpringExtension
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.testcontainers.containers.KafkaContainer
 import org.testcontainers.containers.wait.strategy.Wait
-import org.testcontainers.junit.jupiter.Testcontainers
 import java.time.Duration
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@Testcontainers
-@ContextConfiguration(
-    classes = [MongoDBTestContainerConfig::class, KafkaTestContainerConfig::class]
-)
-@ExtendWith(SpringExtension::class)
+@ContextConfiguration(classes = [KafkaTestContainerConfig::class])
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class CustomerEventKafkaTest {
-
-    @Autowired
-    private lateinit var mockMvc: MockMvc
+class CustomerEventKafkaTest : BaseIntegrationTest() {
 
     @Autowired
     private lateinit var kafkaContainer: KafkaContainer
@@ -53,7 +36,7 @@ class CustomerEventKafkaTest {
     private val objectMapper = jacksonObjectMapper()
 
     @BeforeAll
-    fun setUp() {
+    override fun setUp() {
         kafkaContainer.start()
         kafkaContainer.waitingFor(Wait.forListeningPort())
     }
@@ -81,13 +64,15 @@ class CustomerEventKafkaTest {
         )
 
         //when
-        mockMvc.perform(
-            MockMvcRequestBuilders.post("/api/v1/customers/$tenantId")
-                .contentType("application/json")
-                .content(ObjectMapper().writeValueAsString(createCustomerDTO))
-        ).andExpect(MockMvcResultMatchers.status().isOk)
+        val registrationResponse: ResponseEntity<Void> = restTemplate.postForEntity(
+            "/api/v1/customers/$tenantId",
+            createCustomerDTO,
+            Void::class.java
+        )
 
         //then
+        assertThat(registrationResponse.statusCode).isEqualTo(HttpStatus.OK)
+
         val consumer = prepareConsumer()
         val records = consumer.poll(Duration.ofSeconds(10))
 

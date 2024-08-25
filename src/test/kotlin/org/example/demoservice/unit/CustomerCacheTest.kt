@@ -1,20 +1,18 @@
-package org.example.demoservice.customer
+package org.example.demoservice.unit
 
 import org.example.demoservice.config.CaffeineCacheConfig
+import org.example.demoservice.customer.*
 import org.example.demoservice.customer.dto.CreateCustomerDTO
 import org.example.demoservice.customer.dto.CustomerDTO
 import org.example.demoservice.customer.event.CustomerEventProducer
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit.jupiter.SpringExtension
 
-@ExtendWith(SpringExtension::class)
 @SpringBootTest
 @ContextConfiguration(classes = [CustomerService::class, CaffeineCacheConfig::class])
 class CustomerCacheTest {

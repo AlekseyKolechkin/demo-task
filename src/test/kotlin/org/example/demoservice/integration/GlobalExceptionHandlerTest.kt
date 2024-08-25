@@ -1,33 +1,19 @@
-package org.example.demoservice
+package org.example.demoservice.integration
 
 import org.example.demoservice.api.v1.model.ApiErrorResponse
 import org.example.demoservice.customer.event.CustomerEventProducer
-import org.example.demoservice.testconfig.MongoDBTestContainerConfig
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.test.context.ContextConfiguration
-import org.testcontainers.junit.jupiter.Testcontainers
 
 
-@Testcontainers
-@ContextConfiguration(
-    classes = [MongoDBTestContainerConfig::class]
-)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class GlobalExceptionHandlerTest {
+class GlobalExceptionHandlerTest : BaseIntegrationTest() {
 
     @MockBean
     private lateinit var customerEventProducer: CustomerEventProducer
-
-    @Autowired
-    private lateinit var restTemplate: TestRestTemplate
 
     @Test
     fun handleCustomerNotFoundException() {
